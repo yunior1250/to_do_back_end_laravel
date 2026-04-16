@@ -1,0 +1,154 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8062
+    [34mall[39m: [
+      [34;4mApp\Models\Task[39;24m {#8105
+        [34mid[39m: [35m1[39m,
+        [34muser_id[39m: [35m1[39m,
+        [34mcategory_id[39m: [35m1[39m,
+        [34mtitle[39m: [32m"[39m[32mTerminar reporte mensual[39m[32m"[39m,
+        [34mdescription[39m: [32m"[39m[32mPreparar el reporte de ventas del mes.[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+        [34mpriority[39m: [32m"[39m[32mhigh[39m[32m"[39m,
+        [34mdue_date[39m: [32m"[39m[32m2026-04-17 23:28:10[39m[32m"[39m,
+        [34mis_completed[39m: [36mfalse[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mtags[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8586
+          [34mall[39m: [
+            [34;4mApp\Models\Tag[39;24m {#8085
+              [34mid[39m: [35m1[39m,
+              [34mname[39m: [32m"[39m[32murgente[39m[32m"[39m,
+              [34mcolor[39m: [32m"[39m[32m#ef4444[39m[32m"[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mpivot[39m: [34;4mIlluminate\Database\Eloquent\Relations\Pivot[39;24m {#8084
+                [34mtask_id[39m: [35m1[39m,
+                [34mtag_id[39m: [35m1[39m,
+              },
+            },
+            [34;4mApp\Models\Tag[39;24m {#8087
+              [34mid[39m: [35m2[39m,
+              [34mname[39m: [32m"[39m[32mimportante[39m[32m"[39m,
+              [34mcolor[39m: [32m"[39m[32m#8b5cf6[39m[32m"[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mpivot[39m: [34;4mIlluminate\Database\Eloquent\Relations\Pivot[39;24m {#8591
+                [34mtask_id[39m: [35m1[39m,
+                [34mtag_id[39m: [35m2[39m,
+              },
+            },
+          ],
+        },
+        [34msubtasks[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8520
+          [34mall[39m: [
+            [34;4mApp\Models\Subtask[39;24m {#8515
+              [34mid[39m: [35m1[39m,
+              [34mtask_id[39m: [35m1[39m,
+              [34mtitle[39m: [32m"[39m[32mRecopilar datos[39m[32m"[39m,
+              [34mis_completed[39m: [36mtrue[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+            },
+            [34;4mApp\Models\Subtask[39;24m {#8514
+              [34mid[39m: [35m2[39m,
+              [34mtask_id[39m: [35m1[39m,
+              [34mtitle[39m: [32m"[39m[32mRedactar conclusiones[39m[32m"[39m,
+              [34mis_completed[39m: [36mfalse[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+            },
+          ],
+        },
+      },
+      [34;4mApp\Models\Task[39;24m {#8106
+        [34mid[39m: [35m2[39m,
+        [34muser_id[39m: [35m2[39m,
+        [34mcategory_id[39m: [35m2[39m,
+        [34mtitle[39m: [32m"[39m[32mComprar víveres[39m[32m"[39m,
+        [34mdescription[39m: [32m"[39m[32mFrutas, verduras y pan.[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mpending[39m[32m"[39m,
+        [34mpriority[39m: [32m"[39m[32mmedium[39m[32m"[39m,
+        [34mdue_date[39m: [32m"[39m[32m2026-04-16 23:28:10[39m[32m"[39m,
+        [34mis_completed[39m: [36mfalse[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mtags[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8562
+          [34mall[39m: [
+            [34;4mApp\Models\Tag[39;24m {#8525
+              [34mid[39m: [35m3[39m,
+              [34mname[39m: [32m"[39m[32mrápido[39m[32m"[39m,
+              [34mcolor[39m: [32m"[39m[32m#10b981[39m[32m"[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mpivot[39m: [34;4mIlluminate\Database\Eloquent\Relations\Pivot[39;24m {#8590
+                [34mtask_id[39m: [35m2[39m,
+                [34mtag_id[39m: [35m3[39m,
+              },
+            },
+          ],
+        },
+        [34msubtasks[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8517
+          [34mall[39m: [
+            [34;4mApp\Models\Subtask[39;24m {#8513
+              [34mid[39m: [35m3[39m,
+              [34mtask_id[39m: [35m2[39m,
+              [34mtitle[39m: [32m"[39m[32mHacer lista[39m[32m"[39m,
+              [34mis_completed[39m: [36mfalse[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+            },
+          ],
+        },
+      },
+      [34;4mApp\Models\Task[39;24m {#8107
+        [34mid[39m: [35m3[39m,
+        [34muser_id[39m: [35m3[39m,
+        [34mcategory_id[39m: [35m3[39m,
+        [34mtitle[39m: [32m"[39m[32mEstudiar Laravel[39m[32m"[39m,
+        [34mdescription[39m: [32m"[39m[32mRevisar documentación de Eloquent.[39m[32m"[39m,
+        [34mstatus[39m: [32m"[39m[32mcompleted[39m[32m"[39m,
+        [34mpriority[39m: [32m"[39m[32mlow[39m[32m"[39m,
+        [34mdue_date[39m: [32m"[39m[32m2026-04-14 23:28:10[39m[32m"[39m,
+        [34mis_completed[39m: [36mtrue[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+        [34mtags[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8108
+          [34mall[39m: [
+            [34;4mApp\Models\Tag[39;24m {#8086
+              [34mid[39m: [35m2[39m,
+              [34mname[39m: [32m"[39m[32mimportante[39m[32m"[39m,
+              [34mcolor[39m: [32m"[39m[32m#8b5cf6[39m[32m"[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mpivot[39m: [34;4mIlluminate\Database\Eloquent\Relations\Pivot[39;24m {#8592
+                [34mtask_id[39m: [35m3[39m,
+                [34mtag_id[39m: [35m2[39m,
+              },
+            },
+            [34;4mApp\Models\Tag[39;24m {#8088
+              [34mid[39m: [35m3[39m,
+              [34mname[39m: [32m"[39m[32mrápido[39m[32m"[39m,
+              [34mcolor[39m: [32m"[39m[32m#10b981[39m[32m"[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mpivot[39m: [34;4mIlluminate\Database\Eloquent\Relations\Pivot[39;24m {#8589
+                [34mtask_id[39m: [35m3[39m,
+                [34mtag_id[39m: [35m3[39m,
+              },
+            },
+          ],
+        },
+        [34msubtasks[39m: [34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8522
+          [34mall[39m: [
+            [34;4mApp\Models\Subtask[39;24m {#8512
+              [34mid[39m: [35m4[39m,
+              [34mtask_id[39m: [35m3[39m,
+              [34mtitle[39m: [32m"[39m[32mLeer capítulo 3[39m[32m"[39m,
+              [34mis_completed[39m: [36mtrue[39m,
+              [34mcreated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+              [34mupdated_at[39m: [32m"[39m[32m2026-04-15 23:28:10[39m[32m"[39m,
+            },
+          ],
+        },
+      },
+    ],
+  }

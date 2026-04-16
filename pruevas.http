@@ -1,0 +1,32 @@
+
+### Obtener todas las categorías
+GET http://localhost:8000/api/categories
+Accept: application/json
+
+### Crear una categoría
+POST http://localhost:8000/api/categories
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "sample",
+    "color": "#1646a7ff"
+}
+
+### Obtener una categoría
+GET http://localhost:8000/api/categories/1
+Accept: application/json
+
+### Actualizar una categoría
+PUT http://localhost:8000/api/categories/1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "actualizada",
+    "color": "#ff0000"
+}
+
+### Eliminar una categoría
+DELETE http://localhost:8000/api/categories/1
+Accept: application/json

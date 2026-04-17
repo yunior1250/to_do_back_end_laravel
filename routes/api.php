@@ -24,9 +24,9 @@ Route::get('/user', function (Request $request) {
 |   DELETE /tasks/{task}    → destroy (borrar)
 */
 
-Route::apiResource('tasks',      TaskController::class);
+Route::apiResource('tasks', TaskController::class);
 Route::apiResource('categories', CategoryController::class);
-Route::apiResource('tags',       TagController::class);
+Route::apiResource('tags', TagController::class);
 
 // Subtasks anidadas bajo tasks: /api/tasks/{task}/subtasks
 Route::apiResource('tasks.subtasks', SubtaskController::class)

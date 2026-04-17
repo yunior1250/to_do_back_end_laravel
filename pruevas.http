@@ -9,24 +9,72 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "name": "sample",
+    "name": "Estudio",
     "color": "#1646a7ff"
 }
 
 ### Obtener una categoría
-GET http://localhost:8000/api/categories/1
+GET http://localhost:8000/api/categories/2
 Accept: application/json
 
 ### Actualizar una categoría
-PUT http://localhost:8000/api/categories/1
+PUT http://localhost:8000/api/categories/4
 Content-Type: application/json
 Accept: application/json
 
 {
-    "name": "actualizada",
+    "name": "Programacion",
     "color": "#ff0000"
 }
 
 ### Eliminar una categoría
-DELETE http://localhost:8000/api/categories/1
+DELETE http://localhost:8000/api/categories/4
 Accept: application/json
+
+
+///peticones para Tag 
+
+### Obtener todas las etiquetas
+GET http://localhost:8000/api/tags
+Accept: application/json
+
+### Crear una etiqueta
+POST http://localhost:8000/api/tags
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Muy Importante",
+    "color": "#ff0000"
+}
+
+### Obtener una etiqueta
+GET http://localhost:8000/api/tags/1
+Accept: application/json
+
+### Actualizar una etiqueta
+PUT http://localhost:8000/api/tags/3
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Mediobueno",
+    "color": "#ff0000"
+}
+
+### Eliminar una etiqueta
+DELETE http://localhost:8000/api/tags/1
+Accept: application/json
+
+/// provando las subtareas 
+
+### Obtener todas las subtareas de una Tarea
+GET http://localhost:8000/api/tasks/1/subtasks
+Accept: application/json
+
+
+
+
+
+
+

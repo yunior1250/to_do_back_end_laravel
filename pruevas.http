@@ -69,12 +69,61 @@ Accept: application/json
 /// provando las subtareas 
 
 ### Obtener todas las subtareas de una Tarea
-GET http://localhost:8000/api/tasks/1/subtasks
+GET http://localhost:8000/api/tasks/2/subtasks
+Accept: application/json
+
+### Crear una subtarea
+POST http://localhost:8000/api/tasks/2/subtasks
+Content-Type: application/json
+Accept: application/json
+
+{
+    "title": "Comprar leche",
+    "is_completed": false
+}
+
+
+
+
+
+
+/// retorna las tareas
+### Retorna las tareas con sus relaciones
+GET http://localhost:8000/api/tasks
 Accept: application/json
 
 
+### Crear tareas
+POST http://localhost:8000/api/tasks
+Content-Type: application/json
+Accept: application/json
+
+{
+    "user_id": 1,
+    "category_id": 1,
+    "title": "Comprar pan",
+    "description": "Comprar pan para el desayuno",
+    "status": "pending",
+    "priority": "high",
+    "due_date": "2025-12-31",
+    "is_completed": false
+}
 
 
+### Ver tareas
+GET http://localhost:8000/api/tasks/1
+Accept: application/json
 
+### Actualizar tareas
+PUT http://localhost:8000/api/tasks/1
+Content-Type: application/json
+Accept: application/json
 
+{
+     "status": "completed",
+    "is_completed": true
+}
 
+### Eliminar tareas
+DELETE http://localhost:8000/api/tasks/1
+Accept: application/json

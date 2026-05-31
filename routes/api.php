@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubtaskController;
 use App\Http\Controllers\Api\TagController;
@@ -24,10 +25,20 @@ Route::get('/user', function (Request $request) {
 |   DELETE /tasks/{task}    → destroy (borrar)
 */
 
-Route::apiResource('tasks', TaskController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('tags', TagController::class);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-// Subtasks anidadas bajo tasks: /api/tasks/{task}/subtasks
-Route::apiResource('tasks.subtasks', SubtaskController::class)
-    ->shallow(); // shallow: el show/update/destroy usa solo {subtask}
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('tags', TagController::class);
+    // Subtasks anidadas bajo tasks: /api/tasks/{task}/subtasks
+    Route::apiResource('tasks.subtasks', SubtaskController::class)
+        ->shallow(); // shallow: el show/update/destroy usa solo {subtask}
+
+});

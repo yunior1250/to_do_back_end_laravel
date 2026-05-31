@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -11,25 +14,20 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Category::all();
+        $this->authorize('viewAny', Category::class);
+        return CategoryResource::collection($request->user()->categories()->paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'required|string|max:20',
-        ]);
-        $category = Category::create($data);
-        return response()->json([
-            'message' => 'Category created successfully',
-            'category' => $category
-        ], 201);
+        $category = $request->user()->categories()->create($request->validated());
+
+        return (new CategoryResource($category))->response()->setStatusCode(201);
     }
 
     /**
@@ -37,23 +35,18 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return response()->json($category, 200);
+        $this->authorize('view', $category);
+        return new CategoryResource($category);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'required|string|max:20',
-        ]);
-        $category->update($data);
-        return response()->json([
-            'message' => 'Category updated successfully',
-            'category' => $category
-        ], 200);
+        $category->update($request->validated());
+
+        return new CategoryResource($category);
     }
 
     /**
@@ -61,9 +54,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
         $category->delete();
-        return response()->json([
-            'message' => 'Category deleted successfully'
-        ], 200);
+        return response()->noContent();
     }
 }

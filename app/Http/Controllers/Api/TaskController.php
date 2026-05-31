@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
+
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -11,34 +15,29 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Task::with(['category', 'tags', 'subtasks'])->get();
+        $this->authorize('viewAny', Task::class);
+        return TaskResource::collection($request->user()->tasks()->with(['category', 'tags', 'subtasks'])->paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'sometimes|in:pending,in_progress,completed',
-            'priority' => 'sometimes|in:low,medium,high',
-            'due_date' => 'nullable|date',
-            'is_completed' => 'sometimes|boolean',
-        ]);
+        $data = $request->validated();
 
-        $task = Task::create($data);
+        $tagIds = $data['tag_ids'] ?? null;
+        unset($data['tag_ids']);
 
-        return response()->json([
+        $task = $request->user()->tasks()->create($data);
 
-            "message" => "Task created successfully",
-            "task" => $task->load(['category', 'tags', 'subtasks'])
-        ], 201);
+        if ($tagIds !== null) {
+            $task->tags()->sync($tagIds);
+        }
+
+        return (new TaskResource($task->load(['category', 'tags', 'subtasks'])))->response()->setStatusCode(201);
     }
 
     /**
@@ -46,34 +45,26 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return response()->json([
-            "message" => "Task found successfully",
-            "task" => $task->load(['category', 'tags', 'subtasks'])
-        ], 200);
+        $this->authorize('view', $task);
+        return new TaskResource($task->load(['category', 'tags', 'subtasks']));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
-        $data = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'category_id' => 'nullable|exists:categories,id',
-            'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'sometimes|in:pending,in_progress,completed',
-            'priority' => 'sometimes|in:low,medium,high',
-            'due_date' => 'nullable|date',
-            'is_completed' => 'sometimes|boolean',
-        ]);
+        $data = $request->validated();
+        $tagIds = $data['tag_ids'] ?? null;
+        unset($data['tag_ids']);
 
         $task->update($data);
 
-        return response()->json([
-            "message" => "Task updated successfully",
-            "task" => $task->load(['category', 'tags', 'subtasks'])
-        ], 200);
+        if ($request->has('tag_ids')) {
+            $task->tags()->sync($tagIds ?? []);
+        }
+
+        return new TaskResource($task->load(['category', 'tags', 'subtasks']));
     }
 
     /**
@@ -81,10 +72,9 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
         $task->delete();
 
-        return response()->json([
-            "message" => "Task deleted successfully"
-        ], 200);
+        return response()->noContent();
     }
 }

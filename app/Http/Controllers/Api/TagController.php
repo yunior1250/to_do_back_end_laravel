@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
+use App\Http\Resources\TagResource;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
@@ -11,26 +14,20 @@ class TagController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Tag::all();
+        $this->authorize('viewAny', Tag::class);
+        return TagResource::collection($request->user()->tags()->paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTagRequest $request)
     {
-        $data = $request->validate([
-            "name" => "required|string|max:255",
-            "color" => "required|string|max:255",
-        ]);
-        $tag = Tag::create($data);
+        $tag = $request->user()->tags()->create($request->validated());
 
-        return response()->json([
-            'message' => 'Tag created succesfully',
-            'tag' => $tag
-        ], 201);
+        return (new TagResource($tag))->response()->setStatusCode(201);
     }
 
     /**
@@ -38,24 +35,18 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        return response()->json($tag, 200);
+        $this->authorize('view', $tag);
+        return new TagResource($tag);
 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tag $tag)
+    public function update(UpdateTagRequest $request, Tag $tag)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'required|string|max:20',
-        ]);
-        $tag->update($data);
-        return response()->json([
-            'message' => 'Tag update successfully',
-            'tag' => $tag
-        ], 200);
+        $tag->update($request->validated());
+        return new TagResource($tag);
     }
 
     /**
@@ -63,9 +54,8 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        $this->authorize('delete', $tag);
         $tag->delete();
-        return response()->json([
-            'message' => 'Tag deleted successfully'
-        ], 200);
+        return response()->noContent();
     }
 }

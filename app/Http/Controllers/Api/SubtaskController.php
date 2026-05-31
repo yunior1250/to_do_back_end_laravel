@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSubtaskRequest;
+use App\Http\Requests\UpdateSubtaskRequest;
+use App\Http\Resources\SubtaskResource;
 use Illuminate\Http\Request;
 use App\Models\Subtask;
 use App\Models\Task;
@@ -14,23 +17,17 @@ class SubtaskController extends Controller
      */
     public function index(Task $task)
     {
-        return $task->subtasks;
+        $this->authorize("view", $task);
+        return SubtaskResource::collection($task->subtasks);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Task $task)
+    public function store(StoreSubtaskRequest $request, Task $task)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'is_completed' => 'sometimes|boolean'
-        ]);
-        $subtask = $task->subtasks()->create($data);
-        return response()->json([
-            'message' => 'Subtask created successfully',
-            'subtask' => $subtask
-        ], 201);
+        $subtask = $task->subtasks()->create($request->validated());
+        return (new SubtaskResource($subtask))->response()->setStatusCode(201);
     }
 
     /**
@@ -38,23 +35,18 @@ class SubtaskController extends Controller
      */
     public function show(Subtask $subtask)
     {
-        return response()->json($subtask);
+        $this->authorize('view', $subtask);
+        return new SubtaskResource($subtask);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subtask $subtask)
+    public function update(UpdateSubtaskRequest $request, Subtask $subtask)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'is_completed' => 'sometimes|boolean'
-        ]);
-        $subtask->update($data);
-        return response()->json([
-            'message' => 'Subtask updated successfully',
-            'subtask' => $subtask
-        ], 200);
+        $subtask->update($request->validated());
+
+        return new SubtaskResource($subtask);
     }
 
     /**
@@ -62,10 +54,9 @@ class SubtaskController extends Controller
      */
     public function destroy(Subtask $subtask)
     {
+        $this->authorize('delete', $subtask);
         $subtask->delete();
-        return response()->json([
-            'message' => 'subtask deleted successfully'
-        ], 200);
+        return response()->noContent();
 
     }
 }

@@ -1,129 +1,822 @@
+###############################################
+### VARIABLES BASE
+###############################################
+@host = http://localhost:8000/api
 
-### Obtener todas las categorías
-GET http://localhost:8000/api/categories
-Accept: application/json
 
-### Crear una categoría
-POST http://localhost:8000/api/categories
+###############################################
+### SECCIÓN 1 — AUTH (Registro y Login)
+###############################################
+
+### 1.1 Registro Usuario A
+# @name registerA
+POST {{host}}/register
 Content-Type: application/json
 Accept: application/json
 
 {
-    "name": "Estudio",
-    "color": "#1646a7ff"
+    "name": "Usuario A",
+    "email": "userA@test.com",
+    "password": "password123",
+    "password_confirmation": "password123"
 }
 
-### Obtener una categoría
-GET http://localhost:8000/api/categories/2
-Accept: application/json
-
-### Actualizar una categoría
-PUT http://localhost:8000/api/categories/4
+### 1.2 Registro Usuario B
+# @name registerB
+POST {{host}}/register
 Content-Type: application/json
 Accept: application/json
+
+{
+    "name": "Usuario B",
+    "email": "userB@test.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+
+### 1.3 Login Usuario A (si ya existe)
+# @name loginA
+POST {{host}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "userA@test.com",
+    "password": "password123"
+}
+
+### 1.4 Login Usuario B (si ya existe)
+# @name loginB
+POST {{host}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "userB@test.com",
+    "password": "password123"
+}
+
+### 1.5 Login Test (seeded - dueño de "Trabajo")
+# @name loginTest
+POST {{host}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "test@example.com",
+    "password": "password"
+}
+
+### 1.6 Login Ana (seeded - dueña de "Personal")
+# @name loginAna
+POST {{host}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "ana@example.com",
+    "password": "password"
+}
+
+### 1.7 Logout (cierra el token actual)
+POST {{host}}/logout
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 1.8 Obtener el usuario autenticado
+GET {{host}}/user
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+
+###############################################
+### TOKENS (pegar manualmente desde las respuestas de login)
+###############################################
+@tokenA = 
+@tokenB = 
+@tokenTest = 1|79gQ9NldfCZREjrnXsVmUF4hZRRNFzD3ulUGr5ba2a311a97
+@tokenAna =  2|pzl9HF2zZlmJV79mJA65t86W0J7ScX5nCGEmdLYgfbd94f2f
+
+
+###############################################
+### SECCIÓN 2 — TASKS (CRUD básico)
+###############################################
+
+### 2.1 Listar tareas del usuario autenticado
+GET {{host}}/tasks
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 2.2 Crear una tarea
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "category_id": 1,
+    "title": "Comprar pan",
+    "description": "Comprar pan para el desayuno",
+    "status": "pending",
+    "priority": "high",
+    "due_date": "2026-12-31",
+    "is_completed": false
+}
+
+### 2.3 Ver una tarea
+GET {{host}}/tasks/1
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 2.4 Actualizar una tarea
+PUT {{host}}/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "status": "completed",
+    "is_completed": true
+}
+
+### 2.5 Eliminar una tarea
+DELETE {{host}}/tasks/1
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+
+###############################################
+### SECCIÓN 3 — CATEGORIES (CRUD básico)
+###############################################
+
+### 3.1 Listar categorías del usuario
+GET {{host}}/categories
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 3.2 Crear una categoría
+POST {{host}}/categories
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "Estudio",
+    "color": "#1646a7"
+}
+
+### 3.3 Ver una categoría
+GET {{host}}/categories/1
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 3.4 Actualizar una categoría
+PUT {{host}}/categories/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 {
     "name": "Programacion",
     "color": "#ff0000"
 }
 
-### Eliminar una categoría
-DELETE http://localhost:8000/api/categories/4
+### 3.5 Eliminar una categoría
+DELETE {{host}}/categories/1
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 
-///peticones para Tag 
+###############################################
+### SECCIÓN 4 — TAGS (CRUD básico)
+### NOTA: Pendiente Step 4 - aplicar Tag por usuario (opción B)
+###############################################
 
-### Obtener todas las etiquetas
-GET http://localhost:8000/api/tags
+### 4.1 Listar tags
+GET {{host}}/tags
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
-### Crear una etiqueta
-POST http://localhost:8000/api/tags
+### 4.2 Crear un tag
+POST {{host}}/tags
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 {
     "name": "Muy Importante",
     "color": "#ff0000"
 }
 
-### Obtener una etiqueta
-GET http://localhost:8000/api/tags/1
+### 4.3 Ver un tag
+GET {{host}}/tags/1
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
-### Actualizar una etiqueta
-PUT http://localhost:8000/api/tags/3
+### 4.4 Actualizar un tag
+PUT {{host}}/tags/1
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 {
     "name": "Mediobueno",
-    "color": "#ff0000"
+    "color": "#ff8800"
 }
 
-### Eliminar una etiqueta
-DELETE http://localhost:8000/api/tags/1
+### 4.5 Eliminar un tag
+DELETE {{host}}/tags/1
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
-/// provando las subtareas 
 
-### Obtener todas las subtareas de una Tarea
-GET http://localhost:8000/api/tasks/2/subtasks
+###############################################
+### SECCIÓN 5 — SUBTASKS (CRUD anidado)
+### Rutas: GET/POST /tasks/{task}/subtasks   |   GET/PUT/DELETE /subtasks/{subtask}
+###############################################
+
+### 5.1 Listar subtareas de una tarea
+GET {{host}}/tasks/1/subtasks
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
-### Crear una subtarea
-POST http://localhost:8000/api/tasks/2/subtasks
+### 5.2 Crear una subtarea (anidada bajo task)
+POST {{host}}/tasks/1/subtasks
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 {
     "title": "Comprar leche",
     "is_completed": false
 }
 
-
-
-
-
-
-/// retorna las tareas
-### Retorna las tareas con sus relaciones
-GET http://localhost:8000/api/tasks
+### 5.3 Ver una subtarea (ruta shallow)
+GET {{host}}/subtasks/1
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
-
-### Crear tareas
-POST http://localhost:8000/api/tasks
+### 5.4 Actualizar una subtarea
+PUT {{host}}/subtasks/1
 Content-Type: application/json
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
 
 {
-    "user_id": 1,
-    "category_id": 1,
-    "title": "Comprar pan",
-    "description": "Comprar pan para el desayuno",
-    "status": "pending",
-    "priority": "high",
-    "due_date": "2025-12-31",
-    "is_completed": false
-}
-
-
-### Ver tareas
-GET http://localhost:8000/api/tasks/1
-Accept: application/json
-
-### Actualizar tareas
-PUT http://localhost:8000/api/tasks/1
-Content-Type: application/json
-Accept: application/json
-
-{
-     "status": "completed",
+    "title": "Comprar leche descremada",
     "is_completed": true
 }
 
-### Eliminar tareas
-DELETE http://localhost:8000/api/tasks/1
+### 5.5 Eliminar una subtarea
+DELETE {{host}}/subtasks/1
 Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+
+###############################################
+### SECCIÓN 6 — PRUEBAS DE SEGURIDAD: Tasks (Step 1, IDOR fix)
+###############################################
+
+### 6.1 A crea una tarea
+# @name crearTareaA
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenA}}
+
+{
+    "title": "Tarea privada del Usuario A",
+    "description": "Solo el Usuario A debería ver esto",
+    "priority": "high"
+}
+
+### 6.2 B intenta VER la tarea de A (debe dar 403)
+GET {{host}}/tasks/1
+Accept: application/json
+Authorization: Bearer {{tokenB}}
+
+### 6.3 B intenta EDITAR la tarea de A (debe dar 403)
+PUT {{host}}/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenB}}
+
+{
+    "title": "Hackeada por B"
+}
+
+### 6.4 B intenta BORRAR la tarea de A (debe dar 403)
+DELETE {{host}}/tasks/1
+Accept: application/json
+Authorization: Bearer {{tokenB}}
+
+### 6.5 A SÍ puede ver su propia tarea (200)
+GET {{host}}/tasks/1
+Accept: application/json
+Authorization: Bearer {{tokenA}}
+
+### 6.6 Hack attempt - A intenta crear tarea asignándole user_id=999 (debe ignorarlo)
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenA}}
+
+{
+    "title": "Intento de spoofear dueño",
+    "user_id": 999
+}
+
+
+###############################################
+### SECCIÓN 7 — PRUEBAS DE SEGURIDAD: Categories (Step 2, CategoryPolicy)
+###############################################
+
+### 7.1 Test lista sus categorías (debe ver SOLO las suyas)
+GET {{host}}/categories
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 7.2 Ana lista sus categorías (debe ver SOLO las suyas)
+GET {{host}}/categories
+Accept: application/json
+Authorization: Bearer {{tokenAna}}
+
+### 7.3 Test intenta ver categoría de Ana (debe dar 403)
+GET {{host}}/categories/2
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 7.4 Test intenta editar categoría de Ana (debe dar 403)
+PUT {{host}}/categories/2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "Robada"
+}
+
+### 7.5 Test intenta borrar categoría de Ana (debe dar 403)
+DELETE {{host}}/categories/2
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 7.6 Test crea una categoría (user_id se asigna solo)
+POST {{host}}/categories
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "Salud",
+    "color": "#22c55e"
+}
+
+### 7.7 Hack attempt - Test intenta crear con user_id=999 (debe ignorarlo)
+POST {{host}}/categories
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "Hack",
+    "color": "#000000",
+    "user_id": 999
+}
+
+### 7.8 Hack attempt - Test intenta ROBAR su propia categoría a Ana vía update (debe ignorar user_id)
+PUT {{host}}/categories/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "Intento de cambiar dueño",
+    "user_id": 2
+}
+
+
+###############################################
+### SECCIÓN 8 — PRUEBAS DE SEGURIDAD: Subtasks (Step 3, SubtaskPolicy)
+### Patrón: ownership transitivo → Subtask pertenece a Task, Task pertenece a User
+###############################################
+
+### 8.1 Test crea una tarea propia
+# @name crearTareaTest
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Tarea de Test (con subtareas)",
+    "priority": "medium"
+}
+
+### 8.2 Ana crea una tarea propia
+# @name crearTareaAna
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenAna}}
+
+{
+    "title": "Tarea de Ana (con subtareas)",
+    "priority": "low"
+}
+
+### IDs de tareas creadas arriba (ajustá según las respuestas)
+@taskTest = 1
+@taskAna = 2
+
+### 8.3 Test crea una subtarea en SU tarea (201)
+POST {{host}}/tasks/{{taskTest}}/subtasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Subtarea de Test",
+    "is_completed": false
+}
+
+### 8.4 Ana crea una subtarea en SU tarea (201)
+POST {{host}}/tasks/{{taskAna}}/subtasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenAna}}
+
+{
+    "title": "Subtarea de Ana",
+    "is_completed": false
+}
+
+### IDs de subtareas creadas arriba (ajustá según las respuestas)
+@subtaskTest = 5
+@subtaskAna = 6
+
+### 8.5 Test lista subtareas de SU tarea (200)
+GET {{host}}/tasks/{{taskTest}}/subtasks
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 8.6 Test intenta listar subtareas de la tarea de Ana (debe dar 403)
+GET {{host}}/tasks/{{taskAna}}/subtasks
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 8.7 Test intenta CREAR subtarea en la tarea de Ana (debe dar 403)
+POST {{host}}/tasks/{{taskAna}}/subtasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Subtarea hackeada en tarea de Ana",
+    "is_completed": false
+}
+
+### 8.8 Test intenta VER subtarea de Ana directo (debe dar 403)
+GET {{host}}/subtasks/{{subtaskAna}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 8.9 Test intenta EDITAR subtarea de Ana (debe dar 403)
+PUT {{host}}/subtasks/{{subtaskAna}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Hackeada por Test",
+    "is_completed": true
+}
+
+### 8.10 Test intenta BORRAR subtarea de Ana (debe dar 403)
+DELETE {{host}}/subtasks/{{subtaskAna}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 8.11 Test SÍ puede ver su propia subtarea (200)
+GET {{host}}/subtasks/{{subtaskTest}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 8.12 Test SÍ puede editar su propia subtarea (200)
+PUT {{host}}/subtasks/{{subtaskTest}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Subtarea de Test (editada)",
+    "is_completed": true
+}
+
+### 8.13 Hack attempt - Test manda task_id=999 en el body (debe ignorarlo)
+# El task_id viene del URL ({{taskTest}}), no del body.
+# Si sacaste task_id del $fillable, se guarda con task_id={{taskTest}} igual.
+POST {{host}}/tasks/{{taskTest}}/subtasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Intento de moverla a otra tarea",
+    "is_completed": false,
+    "task_id": 999
+}
+
+### 8.14 Test SÍ puede borrar su propia subtarea (200)
+DELETE {{host}}/subtasks/{{subtaskTest}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+
+###############################################
+### SECCIÓN 9 — PRUEBAS DE SEGURIDAD: Tags (Step 4 - opción B, TagPolicy)
+###############################################
+# ⚠️ IMPORTANTE: si corriste `migrate:fresh --seed`, los tokens de la sección
+# anterior ya NO sirven (la tabla personal_access_tokens se vació).
+# Ejecutá primero 1.5 (loginTest) y 1.6 (loginAna) y pegá los tokens nuevos
+# arriba en las variables @tokenTest y @tokenAna.
+#
+# IDs esperados después del seeder:
+#   Tag 1 → "urgente"     → de Test
+#   Tag 2 → "importante"  → de Ana
+#   Tag 3 → "rápido"      → de Luis
+
+@tagTest = 1
+@tagAna = 2
+
+### 9.1 Test lista sus tags (debe ver SOLO "urgente")
+GET {{host}}/tags
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 9.2 Ana lista sus tags (debe ver SOLO "importante")
+GET {{host}}/tags
+Accept: application/json
+Authorization: Bearer {{tokenAna}}
+
+### 9.3 Test SÍ puede ver su propio tag (200)
+GET {{host}}/tags/{{tagTest}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 9.4 Test intenta VER tag de Ana (debe dar 403)
+GET {{host}}/tags/{{tagAna}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 9.5 Test intenta EDITAR tag de Ana (debe dar 403)
+PUT {{host}}/tags/{{tagAna}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "robado",
+    "color": "#000000"
+}
+
+### 9.6 Test intenta BORRAR tag de Ana (debe dar 403)
+DELETE {{host}}/tags/{{tagAna}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+### 9.7 Test crea un tag (user_id se asigna solo, 201)
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "personal",
+    "color": "#22c55e"
+}
+
+### 9.8 Hack attempt - Test intenta crear con user_id=999 (debe ignorarlo)
+# Aunque mande user_id=999, debe guardarse con user_id del token (= 1).
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "hack",
+    "color": "#ff0000",
+    "user_id": 999
+}
+
+### 9.9 Hack attempt - Test intenta cambiar el dueño de su tag vía update
+# user_id NO está en $fillable → debe ignorarse, el tag sigue siendo de Test.
+PUT {{host}}/tags/{{tagTest}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "urgente",
+    "color": "#ef4444",
+    "user_id": 2
+}
+
+### 9.10 Validación - color inválido (debe dar 422)
+# El regex exige #RRGGBB exacto. "rojo" no matchea.
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "color malo",
+    "color": "rojo"
+}
+
+### 9.11 Validación - color de 4 dígitos (debe dar 422)
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "color corto",
+    "color": "#fff"
+}
+
+### 9.12 Unique compuesto - Test intenta repetir un nombre suyo (debe dar 500 o 422)
+# Como ya existe el tag "urgente" para Test (del seeder), violaría el índice
+# unique(['user_id', 'name']). En PostgreSQL devuelve error de constraint.
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "urgente",
+    "color": "#ef4444"
+}
+
+### 9.13 Unique compuesto - Ana SÍ puede usar el nombre "urgente" (201)
+# El índice es compuesto (user_id + name), no global. Ana puede tener
+# un tag llamado "urgente" porque pertenece a otro user.
+POST {{host}}/tags
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenAna}}
+
+{
+    "name": "urgente",
+    "color": "#ef4444"
+}
+
+### 9.14 Test SÍ puede editar su propio tag (200)
+PUT {{host}}/tags/{{tagTest}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "name": "muy urgente",
+    "color": "#dc2626"
+}
+
+### 9.15 Test SÍ puede borrar su propio tag (200)
+# Ojo: si tu tag está asociado a tasks (via tag_task), el delete elimina
+# las filas de la tabla pivote en cascada (lo configuramos en la migración).
+DELETE {{host}}/tags/{{tagTest}}
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+
+###############################################
+### SECCIÓN 10 — VALIDACIÓN CRUZADA en TaskController (Step 4.6)
+###############################################
+# Prueba que el user NO pueda asociar a sus tasks recursos de otros users:
+# - category_id de otro user → 422
+# - tag_ids con algún tag de otro user → 422
+# Y que SÍ funcione con sus propios IDs.
+#
+# Pre-requisitos (después de migrate:fresh --seed):
+#   user_id=1 (Test):  category_id=1 ("Trabajo"),  tag_id=1 ("urgente")
+#   user_id=2 (Ana):   category_id=2 ("Personal"), tag_id=2 ("importante")
+#   user_id=3 (Luis):  category_id=3 ("Estudios"), tag_id=3 ("rápido")
+#
+# Re-loguear y actualizar @tokenTest / @tokenAna después de cada migrate:fresh.
+
+### 10.1 Test crea task con SU category y SUS tags (201)
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task con tags propios",
+    "category_id": 1,
+    "priority": "medium",
+    "tag_ids": [1]
+}
+
+### 10.2 Test intenta usar category_id de Ana (debe dar 422)
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task con categoría ajena",
+    "category_id": 2
+}
+
+### 10.3 Test intenta usar tag_id de Ana (debe dar 422)
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task con tag ajeno",
+    "tag_ids": [2]
+}
+
+### 10.4 Test mezcla un tag propio y uno ajeno (debe dar 422)
+# Aunque uno sea válido, si CUALQUIERA de los IDs es ajeno → falla.
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task con tags mezclados",
+    "tag_ids": [1, 2]
+}
+
+### 10.5 Test intenta usar tag_id inexistente (debe dar 422)
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task con tag inexistente",
+    "tag_ids": [9999]
+}
+
+### 10.6 Test sin tag_ids ni category_id (debe dar 201)
+# Confirma que ambos son opcionales (nullable/sometimes).
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Task minimal"
+}
+
+### 10.7 Test actualiza una de sus tasks reemplazando tags con sync
+# Antes: la task creada en 10.1 tiene tag_ids=[1]. Después: tag_ids=[].
+# `sync([])` borra todos los tags asociados.
+# Ajustá el ID en la URL al ID real que devolvió 10.1.update
+PUT {{host}}/tasks/4
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "tag_ids": []
+}
+
+### 10.8 Test PUT sin tag_ids → NO toca la tabla pivote
+# Diferencia clave con 10.7: si NO mandás la clave, no se ejecuta sync().
+# El controller usa $request->has('tag_ids') para distinguir.
+PUT {{host}}/tasks/4
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "status": "completed"
+}
+
+### 10.9 Test intenta cambiar category_id por una de Ana (debe dar 422)
+PUT {{host}}/tasks/4
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "category_id": 2
+}
+
+### 10.10 Hack mass assignment - mandar user_id en body (debe ignorarlo)
+# Como sacamos user_id del $fillable de Task, queda ignorado silenciosamente.
+POST {{host}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{tokenTest}}
+
+{
+    "title": "Hack mass assignment",
+    "user_id": 999
+}

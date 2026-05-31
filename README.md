@@ -1,58 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Todo App API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API para una aplicación de tareas, construida como proyecto de portafolio para demostrar prácticas profesionales con Laravel.
 
-## About Laravel
+Incluye autenticación con tokens (Sanctum), autorización por dueño (Policies + scoped queries), validación con Form Requests, formateo de respuesta con API Resources, factories y una suite de tests Pest 4 que cubre los caminos felices, la validación y los casos IDOR (acceso a recursos ajenos).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP** 8.3
+- **Laravel** 13
+- **Laravel Sanctum** 4 (autenticación por token Bearer)
+- **PostgreSQL** (producción / desarrollo) · **SQLite en memoria** (tests)
+- **Pest** 4 + **pest-plugin-laravel** 4 (tests)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Modelo de dominio
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+User ─┬── hasMany ──► Category
+      ├── hasMany ──► Tag
+      └── hasMany ──► Task ──► hasMany ──► Subtask
+                       └── belongsToMany ──► Tag  (tabla pivot `tag_task`)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+- Una **Categoría** y un **Tag** pertenecen a un usuario. Los nombres son únicos por usuario (dos usuarios distintos pueden tener un tag "urgente" sin colisión).
+- Una **Tarea** pertenece a un usuario y opcionalmente a una categoría suya. Puede llevar muchas etiquetas suyas.
+- Una **Subtarea** pertenece a una tarea (su dueño se infiere por la tarea).
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup
 
-## Code of Conduct
+```bash
+git clone <repo>
+cd todo_app
+composer install
+cp .env.example .env
+php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# configurar credenciales de PostgreSQL en .env (DB_*)
+php artisan migrate
+php artisan db:seed     # opcional: 3 usuarios de prueba con datos
 
-## Security Vulnerabilities
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Usuarios sembrados (`database/seeders/DatabaseSeeder.php`): `test@example.com`, `ana@example.com`, `luis@example.com`. La contraseña de todos es `password`.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Autenticación
+
+Token Bearer emitido por Sanctum. Flujo:
+
+1. `POST /api/register` o `POST /api/login` → devuelve `{user, token}`.
+2. Enviar el token en cada request: `Authorization: Bearer <token>`.
+3. `POST /api/logout` para revocar el token actual.
+
+El endpoint de login tiene **rate limit** de 5 intentos por minuto.
+
+---
+
+## Endpoints
+
+> Todas las rutas, excepto `register`, `login` y `GET /up` (health check), exigen `Authorization: Bearer <token>`.
+
+| Método | Ruta | Acción |
+|---|---|---|
+| `POST` | `/api/register` | Registrar usuario y obtener token |
+| `POST` | `/api/login` | Login y obtener token (throttle 5/min) |
+| `POST` | `/api/logout` | Revocar el token actual |
+| `GET`  | `/api/user` | Devolver el usuario autenticado |
+| `GET`  | `/api/categories` | Listar categorías propias (paginado) |
+| `POST` | `/api/categories` | Crear categoría |
+| `GET`  | `/api/categories/{id}` | Ver categoría |
+| `PUT`  | `/api/categories/{id}` | Actualizar categoría |
+| `DELETE` | `/api/categories/{id}` | Borrar categoría |
+| `GET`  | `/api/tags` | Listar tags propios (paginado) |
+| `POST` | `/api/tags` | Crear tag |
+| `GET`  | `/api/tags/{id}` | Ver tag |
+| `PUT`  | `/api/tags/{id}` | Actualizar tag |
+| `DELETE` | `/api/tags/{id}` | Borrar tag |
+| `GET`  | `/api/tasks` | Listar tareas propias (con `category`, `tags`, `subtasks`) |
+| `POST` | `/api/tasks` | Crear tarea |
+| `GET`  | `/api/tasks/{id}` | Ver tarea |
+| `PUT`  | `/api/tasks/{id}` | Actualizar tarea |
+| `DELETE` | `/api/tasks/{id}` | Borrar tarea |
+| `GET`  | `/api/tasks/{task}/subtasks` | Listar subtareas de una tarea |
+| `POST` | `/api/tasks/{task}/subtasks` | Crear subtarea en una tarea |
+| `GET`  | `/api/subtasks/{id}` | Ver subtarea |
+| `PUT`  | `/api/subtasks/{id}` | Actualizar subtarea |
+| `DELETE` | `/api/subtasks/{id}` | Borrar subtarea |
+
+Especificación detallada (request/response, validaciones, códigos HTTP): ver [`docs/openapi.yaml`](docs/openapi.yaml).
+
+### Ejemplos con `curl`
+
+```bash
+# Registro
+curl -X POST http://localhost:8000/api/register \
+  -H 'Accept: application/json' \
+  -d 'name=Juan&email=juan@example.com&password=password123&password_confirmation=password123'
+
+# Login
+TOKEN=$(curl -s -X POST http://localhost:8000/api/login \
+  -H 'Accept: application/json' \
+  -d 'email=juan@example.com&password=password123' | jq -r .token)
+
+# Crear tarea
+curl -X POST http://localhost:8000/api/tasks \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Comprar pan","priority":"high"}'
+```
+
+---
+
+## Seguridad y autorización
+
+- **IDOR cerrado**: cada acción (`view`, `update`, `delete`) pasa por una Policy que compara `user_id` del recurso con el usuario autenticado. Los listados (`index`) usan `$request->user()->{relacion}()->paginate(...)` para que la query nunca devuelva recursos ajenos.
+- **Cross-relation**: al crear/actualizar tareas, `category_id` y `tag_ids` se validan con `Rule::exists(...)->where('user_id', $this->user()->id)` — no podés referenciar categorías o tags de otro usuario.
+- **Unicidad por usuario**: nombres de Category y Tag son únicos por usuario (validado con `Rule::unique` y, en tags, con índice compuesto en la BD).
+- **Passwords** hashed con `bcrypt` (cast `hashed` en `User::$casts`).
+- **Login throttle**: 5 intentos por minuto vía middleware `throttle:5,1`.
+
+---
+
+## Tests
+
+Configuración en `phpunit.xml`: SQLite en memoria + `BCRYPT_ROUNDS=4` para que el bcrypt no domine el runtime.
+
+```bash
+php artisan test
+```
+
+Suite actual: **90 tests, 219 assertions** cubriendo:
+
+| Archivo | Cobertura |
+|---|---|
+| `tests/Feature/AuthTest.php` | Register, login (credenciales, validación, throttle), logout (revoca token actual, conserva otros), `/api/user`. |
+| `tests/Feature/CategoryTest.php` | CRUD completo + IDOR (view/update/delete ajeno → 403) + validación (required, regex de color) + unique scoped + guest 401. |
+| `tests/Feature/TagTest.php` | Mismo patrón que categorías. |
+| `tests/Feature/TaskTest.php` | CRUD + IDOR + validación + cross-relation (no se puede asignar `category_id` o `tag_ids` de otro usuario) + sincronización de tags en update. |
+| `tests/Feature/SubtaskTest.php` | CRUD anidado (ownership por tarea), IDOR en nested store, en show/update/destroy shallow. |
+
+---
+
+## Convenciones del proyecto
+
+- **Form Requests** en `app/Http/Requests/` — toda la validación está fuera de los controladores; `authorize()` delega en la policy correspondiente.
+- **API Resources** en `app/Http/Resources/` — fechas en ISO 8601, relaciones cargadas con `whenLoaded(...)` para no exponer datos no pedidos.
+- **Policies** en `app/Policies/` — autodescubiertas por Laravel (convención `App\Models\Foo` → `App\Policies\FooPolicy`).
+- **Factories** en `database/factories/` — todas las entidades, con states (`completed()`, `highPriority()` en `TaskFactory`).
+- **Rutas anidadas** con `Route::apiResource(...)->shallow()` para subtasks: `POST /tasks/{task}/subtasks` para crear, pero `PUT /subtasks/{id}` para actualizar.
+
+---
+
+## Estructura
+
+```
+app/
+├── Http/
+│   ├── Controllers/Api/  (Auth, Category, Tag, Task, Subtask)
+│   ├── Requests/         (Store/Update por recurso)
+│   └── Resources/        (Category, Tag, Task, Subtask)
+├── Models/               (User, Category, Tag, Task, Subtask)
+└── Policies/             (Category, Tag, Task, Subtask)
+database/
+├── factories/
+├── migrations/
+└── seeders/
+tests/Feature/            (Auth, Category, Tag, Task, Subtask)
+docs/openapi.yaml         (especificación OpenAPI 3.1)
+routes/api.php
+```
